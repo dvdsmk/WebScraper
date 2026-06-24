@@ -1,2 +1,87 @@
-# WebScraper
-Парсер (web scraper), который собирает данные с сайтов (например, цены на товары, расписание или новости) и сохраняет в удобном формате. A web scraper that collects data from websites (for example, product prices, schedules, or news) and saves it in a convenient format.
+# Web Scraper
+
+Модульный парсер для сбора данных с сайтов: цены на товары, новости и расписание. Результаты сохраняются в JSON или CSV.
+
+## Установка
+
+```bash
+pip install -r requirements.txt
+```
+
+## Использование
+
+```bash
+# Цены на книги (демо-сайт books.toscrape.com)
+python main.py books
+
+# Новости с Hacker News (30 заголовков)
+python main.py news --limit 20
+
+# Расписание / текущее время в крупных городах
+python main.py schedule
+
+# Сохранение в CSV
+python main.py books --format csv
+
+# Оба формата сразу
+python main.py news --format both --output output/hn
+```
+
+## Доступные парсеры
+
+| Команда    | Описание                          | Источник                    |
+|------------|-----------------------------------|-----------------------------|
+| `books`    | Название, цена, рейтинг, наличие  | books.toscrape.com          |
+| `news`     | Заголовки, очки, автор, комменты  | news.ycombinator.com        |
+| `schedule` | Время и день недели по часовым поясам | worldtimeapi.org        |
+
+## Параметры CLI
+
+- `--format`, `-f` — `json`, `csv` или `both` (по умолчанию `json`)
+- `--output`, `-o` — путь к файлу результата
+- `--pages` — число страниц для `books` (по умолчанию 3)
+- `--limit` — число новостей для `news` (по умолчанию 30)
+- `--delay` — пауза между запросами в секундах (по умолчанию 1.0)
+
+## Формат вывода
+
+**JSON** — метаданные + массив записей:
+
+```json
+{
+  "scraper": "books",
+  "source": "https://books.toscrape.com/",
+  "scraped_at": "2026-06-24T12:00:00+00:00",
+  "count": 60,
+  "items": [...]
+}
+```
+
+**CSV** — плоская таблица, удобна для Excel и анализа в pandas.
+
+## Структура проекта
+
+```
+bagrutmm/
+├── main.py              # Точка входа CLI
+├── requirements.txt
+├── scraper/
+│   ├── base.py          # Базовый класс, сохранение JSON/CSV
+│   └── scrapers/
+│       ├── books.py     # Парсер цен
+│       ├── news.py      # Парсер новостей
+│       └── schedule.py  # Парсер расписания
+└── output/              # Результаты (создаётся автоматически)
+```
+
+## Добавление своего парсера
+
+1. Создайте класс, наследующий `BaseScraper` в `scraper/scrapers/`.
+2. Реализуйте методы `name` и `scrape()`.
+3. Зарегистрируйте парсер в `main.py` в словаре `SCRAPERS`.
+
+## Важно
+
+- Соблюдайте `robots.txt` и условия использования сайтов.
+- Не делайте слишком частые запросы — используйте `--delay`.
+- Демо-сайты предназначены для обучения; для реальных проектов адаптируйте селекторы под целевой сайт.
