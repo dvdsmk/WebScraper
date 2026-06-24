@@ -1,3 +1,7 @@
-"""Web scraper package for collecting data from websites."""
+"""Built-in scraper implementations."""
 
-__version__ = "1.0.0"
+from scraper.scrapers.books import BooksScraper
+from scraper.scrapers.news import HackerNewsScraper
+from scraper.scrapers.schedule import WorldTimeScraper
+
+__all__ = ["BooksScraper", "HackerNewsScraper", "WorldTimeScraper"]
